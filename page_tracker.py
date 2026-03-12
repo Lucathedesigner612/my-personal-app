@@ -19,11 +19,24 @@ except Exception as e:
     df = pd.DataFrame(columns=["Category", "Amount", "Item"])
 
 # 2. Display Metrics
+# --- TOP ROW: UPGRADED METRICS ---
+total_spent = df['Amount'].sum()
+# This finds the category with the highest total spend
 if not df.empty:
-    st.metric("Total Spent", f"${df['Amount'].sum():,.2f}")
-    st.dataframe(df, use_container_width=True)
-    col1.metric("Cash Out", f"${total_spent}", delta="-5%", delta_color="normal")
-col2.metric("Top Drain", f"🍕 {highest_cat}") # Adding an emoji here
+    highest_cat = df.groupby("Category")["Amount"].sum().idxmax()
+else:
+    highest_cat = "N/A"
+
+col1, col2, col3 = st.columns(3)
+
+# Metric 1: Total Spending
+col1.metric(label="💸 Total Outflow", value=f"${total_spent:,.2f}")
+
+# Metric 2: The "Top Drain" (Where the money goes most)
+col2.metric(label="🔍 Top Drain", value=highest_cat)
+
+# Metric 3: Transaction Count
+col3.metric(label="📝 Entries", value=len(df))
 # Set a limit for 'Fun' spending
 FUN_LIMIT = 200.0
 fun_spent = df[df['Category'] == 'Fun']['Amount'].sum()
@@ -47,5 +60,6 @@ with st.form("excel_form"):
         df.to_excel(EXCEL_FILE, index=False)
         st.success("Entry added to Excel file!")
         st.rerun()
+
 
 
