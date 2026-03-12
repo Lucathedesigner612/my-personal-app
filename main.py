@@ -13,7 +13,14 @@ st.sidebar.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", widt
 st.sidebar.title("Welcome, Luca")
 st.sidebar.info("System Status: Online 🟢")
 
+password = st.sidebar.text_input("Enter Vault Key", type="password")
 
+if password == "1234": # Change this to your secret key!
+    pg.run()
+else:
+    st.title("🔒 Vault Locked")
+    st.info("Please enter the correct key in the sidebar to access your financial data.")
 # 3. Run the App
 pg.run()
+
 
