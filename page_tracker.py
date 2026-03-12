@@ -30,7 +30,16 @@ else:
 col1, col2, col3 = st.columns(3)
 
 # Metric 1: Total Spending
-col1.metric(label="💸 Total Outflow", value=f"${total_spent:,.2f}")
+# Example: If your budget is $500
+budget = 500
+difference = budget - total_spent
+
+col1.metric(
+    label="Remaining Budget", 
+    value=f"${difference}", 
+    delta=f"{difference} vs Goal",
+    delta_color="normal" # "normal" makes positive green, "inverse" makes positive red
+)
 
 # Metric 2: The "Top Drain" (Where the money goes most)
 col2.metric(label="🔍 Top Drain", value=highest_cat)
@@ -60,6 +69,7 @@ with st.form("excel_form"):
         df.to_excel(EXCEL_FILE, index=False)
         st.success("Entry added to Excel file!")
         st.rerun()
+
 
 
 
