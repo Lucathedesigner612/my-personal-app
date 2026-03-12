@@ -1,36 +1,30 @@
 import streamlit as st
-import pandas as pd
-import os
+from streamlit_gsheets import GSheetsConnection
 
-# Define the file
-DB_FILE = "spending_data.csv"
+st.title("🛡️ Permanent Cloud Vault")
 
-# Check if file exists and has content
-if os.path.exists(DB_FILE) and os.path.getsize(DB_FILE) > 0:
-    df = pd.read_csv(DB_FILE)
-else:
-    # If file is empty or missing, create a temporary empty display
-    df = pd.DataFrame(columns=["Category", "Amount", "Item"])
+# 1. Establish Connection
+conn = st.connection("gsheets", type=GSheetsConnection)
 
-# Now the rest of your app won't crash!
-st.title("🛡️ Financial Command Center")
+# 2. Read Data
+df = conn.read()
 
-if df.empty:
-    st.info("Your vault is currently empty. Add your first expense in the 'Add Entry' tab!")
-else:
-    # Your metrics and charts code goes here...
-    st.write("Data loaded successfully!")
+st.subheader("Live Data from Google Sheets")
+st.dataframe(df, use_container_width=True)
 
-
-st.markdown("---")
-st.subheader("📥 Backup Your Data")
-
-# Convert the current dataframe to a CSV string
-csv_data = df.to_csv(index=False).encode('utf-8')
-
-st.download_button(
-    label="Download Expenses as CSV",
-    data=csv_data,
-    file_name="my_vault_backup.csv",
-    mime="text/csv",
-)
+# 3. Add New Data Form
+with st.form("add_form"):
+    new_cat = st.selectbox("Category", ["Food", "Tech", "Bills"])
+    new_amt = st.number_input("Amount", min_value=0.0)
+    new_item = st.text_input("What was it?")
+    
+    if st.form_submit_button("Upload to Cloud"):
+        # Create a new row
+        new_row = {"Category": new_cat, "Amount": new_amt, "Item": new_item}
+        
+        # Add to existing data and update the sheet
+        updated_df = df.append(new_row, ignore_index=True)
+        conn.update(data=updated_df)
+        
+        st.success("Data written to Google Sheets! It's now permanent.")
+        st.balloons()
