@@ -27,3 +27,10 @@ with col2:
 
 st.markdown("---")
 st.chat_input("Write a note to your future self...")
+
+st.subheader("🔮 Goal Forecast")
+avg_savings = st.number_input("Average monthly savings ($)", value=100)
+
+if avg_savings > 0:
+    months_left = (target_price - current_saved) / avg_savings
+    st.info(f"At this rate, you will reach your goal in **{months_left:.1f} months**!")
