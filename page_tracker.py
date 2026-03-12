@@ -70,6 +70,17 @@ with st.form("excel_form"):
         st.success("Entry added to Excel file!")
         st.rerun()
 
+# Example: If your budget is $500
+budget = 500
+difference = budget - total_spent
+
+col1.metric(
+    label="Remaining Budget", 
+    value=f"${difference}", 
+    delta=f"{difference} vs Goal",
+    delta_color="normal" # "normal" makes positive green, "inverse" makes positive red
+)
+
 
 
 
