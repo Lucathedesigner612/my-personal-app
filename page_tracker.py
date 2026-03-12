@@ -1,30 +1,38 @@
 import streamlit as st
-from streamlit_gsheets import GSheetsConnection
+import pandas as pd
+import os
 
-st.title("🛡️ Permanent Cloud Vault")
+st.title("📊 Excel Ledger System")
 
-# 1. Establish Connection
-conn = st.connection("gsheets", type=GSheetsConnection)
+EXCEL_FILE = "spending_data.xlsx"
 
-# 2. Read Data
-df = conn.read()
+# 1. Load the Excel File
+try:
+    if os.path.exists(EXCEL_FILE):
+        df = pd.read_excel(EXCEL_FILE)
+    else:
+        # Create a blank Excel file if it doesn't exist
+        df = pd.DataFrame(columns=["Category", "Amount", "Item"])
+        df.to_excel(EXCEL_FILE, index=False)
+except Exception as e:
+    st.error(f"Excel Error: {e}")
+    df = pd.DataFrame(columns=["Category", "Amount", "Item"])
 
-st.subheader("Live Data from Google Sheets")
-st.dataframe(df, use_container_width=True)
+# 2. Display Metrics
+if not df.empty:
+    st.metric("Total Spent", f"${df['Amount'].sum():,.2f}")
+    st.dataframe(df, use_container_width=True)
 
-# 3. Add New Data Form
-with st.form("add_form"):
-    new_cat = st.selectbox("Category", ["Food", "Tech", "Bills"])
-    new_amt = st.number_input("Amount", min_value=0.0)
-    new_item = st.text_input("What was it?")
+# 3. Add Entry Form
+with st.form("excel_form"):
+    cat = st.selectbox("Category", ["Food", "Tech", "Fun"])
+    amt = st.number_input("Amount", min_value=0.0)
+    note = st.text_input("Note")
     
-    if st.form_submit_button("Upload to Cloud"):
-        # Create a new row
-        new_row = {"Category": new_cat, "Amount": new_amt, "Item": new_item}
-        
-        # Add to existing data and update the sheet
-        updated_df = df.append(new_row, ignore_index=True)
-        conn.update(data=updated_df)
-        
-        st.success("Data written to Google Sheets! It's now permanent.")
-        st.balloons()
+    if st.form_submit_button("Save to Excel"):
+        new_row = pd.DataFrame([[cat, amt, note]], columns=["Category", "Amount", "Item"])
+        # Append and Save
+        df = pd.concat([df, new_row], ignore_index=True)
+        df.to_excel(EXCEL_FILE, index=False)
+        st.success("Entry added to Excel file!")
+        st.rerun()
