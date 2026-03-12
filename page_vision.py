@@ -1,15 +1,29 @@
 import streamlit as st
 
 st.title("🚀 2026 Vision Board")
-st.write("Upload images or write down goals you are saving for!")
+st.write("What are we saving for? Define your goals and visualize the future.")
 
-goal = st.text_input("What is your next big milestone?")
-target = st.number_input("Target Amount ($)", min_value=0)
+# Create two columns: One for the goal, one for the image
+col1, col2 = st.columns([1, 1])
 
-if st.button("Add to Vision"):
-    st.success(f"Goal '{goal}' added! Keep tracking those expenses to get there.")
-    st.balloons()
+with col1:
+    st.subheader("Current Focus")
+    goal_name = st.text_input("Project Name", value="New Gaming Setup")
+    target_price = st.number_input("Target Amount ($)", value=1500)
+    
+    # Let's use a slider to show progress manually for now
+    current_saved = st.slider("How much have you saved?", 0, target_price, 450)
+    
+    # Logic to calculate percentage
+    progress = current_saved / target_price
+    st.progress(progress)
+    st.write(f"**{progress:.0%}** of the way there!")
 
-# Simple progress bar demo
-st.write("Progress to New Laptop:")
-st.progress(65) # 65%
+with col2:
+    st.subheader("The Inspiration")
+    # You can put a URL to any image here!
+    st.image("https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&q=80&w=1000", 
+             caption="Visualizing the win.")
+
+st.markdown("---")
+st.chat_input("Write a note to your future self...")
