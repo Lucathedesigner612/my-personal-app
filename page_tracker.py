@@ -70,16 +70,17 @@ with st.form("excel_form"):
         st.success("Entry added to Excel file!")
         st.rerun()
 
-# Example: If your budget is $500
-budget = 500
-difference = budget - total_spent
+if st.button("🗑️ Delete Last Entry"):
+    if not df.empty:
+        # Remove the last row
+        df = df.drop(df.index[-1])
+        # Save it back to Excel
+        df.to_excel(EXCEL_FILE, index=False)
+        st.warning("Last entry removed!")
+        st.rerun()
+    else:
+        st.info("Nothing left to delete!")
 
-col1.metric(
-    label="Remaining Budget", 
-    value=f"${difference}", 
-    delta=f"{difference} vs Goal",
-    delta_color="normal" # "normal" makes positive green, "inverse" makes positive red
-)
 
 
 
