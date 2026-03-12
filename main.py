@@ -9,5 +9,11 @@ vision = st.Page("page_vision.py", title="Vision Board", icon="🚀")
 # 2. Create Navigation
 pg = st.navigation([tracker, vision])
 
+st.sidebar.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100)
+st.sidebar.title("Welcome, Luca")
+st.sidebar.info("System Status: Online 🟢")
+
+
 # 3. Run the App
 pg.run()
+
