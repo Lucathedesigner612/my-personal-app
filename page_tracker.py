@@ -21,3 +21,16 @@ else:
     # Your metrics and charts code goes here...
     st.write("Data loaded successfully!")
 
+
+st.markdown("---")
+st.subheader("📥 Backup Your Data")
+
+# Convert the current dataframe to a CSV string
+csv_data = df.to_csv(index=False).encode('utf-8')
+
+st.download_button(
+    label="Download Expenses as CSV",
+    data=csv_data,
+    file_name="my_vault_backup.csv",
+    mime="text/csv",
+)
