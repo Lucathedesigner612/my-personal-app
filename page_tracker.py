@@ -23,6 +23,16 @@ if not df.empty:
     st.metric("Total Spent", f"${df['Amount'].sum():,.2f}")
     st.dataframe(df, use_container_width=True)
 
+# Set a limit for 'Fun' spending
+FUN_LIMIT = 200.0
+fun_spent = df[df['Category'] == 'Fun']['Amount'].sum()
+
+if fun_spent > FUN_LIMIT:
+    st.error(f"🚨 Budget Alert: You've spent ${fun_spent} on Fun! Limit is ${FUN_LIMIT}.")
+else:
+    st.success(f"✅ Budget Check: You have ${FUN_LIMIT - fun_spent} left for Fun.")
+
+
 # 3. Add Entry Form
 with st.form("excel_form"):
     cat = st.selectbox("Category", ["Food", "Tech", "Fun"])
@@ -36,3 +46,4 @@ with st.form("excel_form"):
         df.to_excel(EXCEL_FILE, index=False)
         st.success("Entry added to Excel file!")
         st.rerun()
+
