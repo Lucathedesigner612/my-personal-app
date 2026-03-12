@@ -22,7 +22,8 @@ except Exception as e:
 if not df.empty:
     st.metric("Total Spent", f"${df['Amount'].sum():,.2f}")
     st.dataframe(df, use_container_width=True)
-
+    col1.metric("Cash Out", f"${total_spent}", delta="-5%", delta_color="normal")
+col2.metric("Top Drain", f"🍕 {highest_cat}") # Adding an emoji here
 # Set a limit for 'Fun' spending
 FUN_LIMIT = 200.0
 fun_spent = df[df['Category'] == 'Fun']['Amount'].sum()
@@ -46,4 +47,5 @@ with st.form("excel_form"):
         df.to_excel(EXCEL_FILE, index=False)
         st.success("Entry added to Excel file!")
         st.rerun()
+
 
